@@ -80,7 +80,7 @@ public class AMT{
 		
 		 try {
 	            // open websocket
-	            final WebsocketClientEndpoint clientEndPoint = new WebsocketClientEndpoint(new URI("wss://0hqif30xkl.execute-api.us-west-2.amazonaws.com/production"));
+	            final WebsocketClientEndpoint clientEndPoint = new WebsocketClientEndpoint(new URI("<YOUR WEBSOCKET URL>"));
 
 	            // add listener
 	            clientEndPoint.addMessageHandler(new WebsocketClientEndpoint.MessageHandler() {
