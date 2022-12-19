@@ -80,7 +80,7 @@ public class AMT{
 		
 		 try {
 	            // open websocket
-	            final WebsocketClientEndpoint clientEndPoint = new WebsocketClientEndpoint(new URI("<YOUR WEBSOCKET URL>"));
+	            final WebsocketClientEndpoint clientEndPoint = new WebsocketClientEndpoint(new URI("wss://0hqif30xkl.execute-api.us-west-2.amazonaws.com/production"));
 
 	            // add listener
 	            clientEndPoint.addMessageHandler(new WebsocketClientEndpoint.MessageHandler() {
@@ -157,7 +157,7 @@ public class AMT{
 	        	        		        
 	        	        			}
 	        	        			line2=s2.toString();
-	        	        			output.put("LinuxKeyboard",getKeyboardLinuxInformation(line2));
+	        	        			output.put("Keyboard",getKeyboardLinuxInformation(line2));
 	        	        			
 	        	        			
 	        	        		}
@@ -179,7 +179,12 @@ public class AMT{
 	        	        		output.put("SystemStatus", "off");
 	        		            System.out.println(output.toString());
 	        	            	clientEndPoint.sendMessage(output.toString());
-								runtime.exec("shutdown -s -t 5");
+	        	            	if(getOSInfo(os).equals("Ubuntu")) {
+	        	            		runtime.exec("shutdown -P now");
+	        	            	}
+	        	            	else {
+	        	            		runtime.exec("shutdown -s -t 5");
+	        	            	}
 	        	            	System.exit(0);
 							} catch (IOException e) {
 								// TODO Auto-generated catch block
@@ -241,7 +246,7 @@ public class AMT{
 	        		        
 	        			}
 	        			line2=s2.toString();
-	        			output.put("LinuxKeyboard",getKeyboardLinuxInformation(line2));
+	        			output.put("Keyboard",getKeyboardLinuxInformation(line2));
 	        			
 	        			
 	        		}
@@ -249,6 +254,7 @@ public class AMT{
 	        		
 	        		output.put("HDD",getHDDInformation(hal));
 	        		output.put("RAM",getRAMInformation(hal));
+	        		output.put("Keyboard", getKeyboardInformation(hal));
 	        		output.put("CPU",getCPUInformation(hal));
 	        		output.put("System",getSysInformation(hal));
 	        		output.put("MAC",hal.getNetworkIFs(false).get(0).getMacaddr());
@@ -257,12 +263,12 @@ public class AMT{
 	        		}
 	        		catch(Exception e)
 	        			{}
-	        		output.put("Keyboard", getKeyboardInformation(hal));
+	        		//output.put("Keyboard", getKeyboardInformation(hal));
 	        		output.put("OS", getOSInfo(os));
 	        		output.put("SystemStatus", "on");
 		            System.out.println(output.toString());
 	            	clientEndPoint.sendMessage(output.toString());
-	            	Thread.sleep(30000);
+	            	Thread.sleep(60000);
 	            }
 	            
 	            
@@ -317,10 +323,10 @@ public class AMT{
 		return  hal.getFamily();
 	}
 	@SuppressWarnings("unchecked")
-	public static JSONObject getKeyboardLinuxInformation(String line1)
+	public static String getKeyboardLinuxInformation(String line1)
 	{
 		JSONObject mouseInfo= new JSONObject(); 
-		
+		String Model="";
 		
 		
 			String[] dic = line1.toString().split("\\R");
@@ -330,7 +336,7 @@ public class AMT{
 				for(int index=0; index <temp.length;index++) {
 					
 					if(temp[index].equals("  Model"))
-						mouseInfo.put("Model", temp[index+1].replaceAll("\"",""));
+						Model=temp[index+1].replaceAll("\"","");
 				}
 					
 				
@@ -338,15 +344,15 @@ public class AMT{
 		
 //		monitorInfo.put("size",dic[1]);
 //		System.out.println(monitorInfo);
-		return mouseInfo;
+		return Model;
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static JSONObject getMouseLinuxInformation(String line1)
+	public static String getMouseLinuxInformation(String line1)
 	{
 		JSONObject mouseInfo= new JSONObject(); 
-		
+		String Model="";
 		
 		
 			String[] dic = line1.toString().split("\\R");
@@ -356,7 +362,7 @@ public class AMT{
 				for(int index=0; index <temp.length;index++) {
 					
 					if(temp[index].equals("  Model"))
-						mouseInfo.put("Model", temp[index+1].replaceAll("\"",""));
+						Model= temp[index+1].replaceAll("\"","");
 				}
 					
 				
@@ -364,7 +370,7 @@ public class AMT{
 		
 //		monitorInfo.put("size",dic[1]);
 //		System.out.println(monitorInfo);
-		return mouseInfo;
+		return Model;
 		
 	}
 
